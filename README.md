@@ -1,5 +1,8 @@
 #   Library-RRC-encoder
 
+WARNING: The current source code is for an older version of the encoder,
+it is yet to be updated to the newer vecrsion described in this readme.
+
 This is the RRC encoder and decoder protocol for data broadcasting.
 Each package includes the following information:
 
@@ -66,10 +69,13 @@ The barometer collects data for pressure in mbar and temperature in celcius.
 
 ##  Checksum
 
-4 bits used for checksum DBCF
+Each piece of data will consist of 24 bits, 4 bits of which will be copied for checksum
+
+```xxxx xxxD   Bxxx xxxG   Cxxx xxxF```
 
 D = LSB of highest byte\
 B = MSB of middle byte\
+G = LSB of middle byte\
 C = MSB of lowest byte\
 F = LSB of lowest byte
 
@@ -77,22 +83,29 @@ F = LSB of lowest byte
 ##  Timestamp
 
 The system is expected to be running for 2 hours at a 5Hz 
-sampling and trasmission rate. With the timestamp as an integer
+sampling and trasmission rate (STR). With the timestamp as an integer
 this gives a maximum stamp of 36000 readings which is 16-bit wide. 
-A 16-bit timestamp will give even more space up to 65535 readings.
-
 
 ##  Overall
 
-|  Byte  |   Content   |
-|:------:|:-----------:|
-| byte 1 | `HHHC CCCD` |
-| byte 2 | `HHHD DDDD` |
-| byte 3 | `HHHD DDDD` |
-| byte 4 | `HHHD DDDD` |
-| byte 5 | `HHHD DDDD` |
-| byte 6 | `HHHD DDTT` |
-| byte 7 | `HHHT TTTT` |
-| byte 8 | `111T TTTT` |
+The overall protocol will be as the following:
+
+*   The largest piece of data is 22-bit wide => 24 bits will be used to pad to a whole byte.
+*   Headers will use 3 bits of each packet, with a terminating header for the last one in a package.
+*   Checksum will use 5 bits and will be inserted in the first packet.
+*   Timestamp will use 20 bits giving more time of operation and/or higher STR.
+
+|   Byte  |   Content   |
+|:-------:|:-----------:|
+| byte 01 | `HHHC CCCC` |
+| byte 02 | `HHHD DDDD` |
+| byte 03 | `HHHD DDDD` |
+| byte 04 | `HHHD DDDD` |
+| byte 05 | `HHHD DDDD` |
+| byte 06 | `HHH0 DDDD` |
+| byte 07 | `HHHT TTTT` |
+| byte 08 | `HHHT TTTT` |
+| byte 09 | `HHHT TTTT` |
+| byte 10 | `111T TTTT` |
 
 H = Header, C = Checksum, D = Data, T = Timestamp
