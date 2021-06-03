@@ -66,41 +66,33 @@ The barometer collects data for pressure in mbar and temperature in celcius.
 
 ##  Checksum
 
-4 bits used for checksum
-dbcf
+4 bits used for checksum DBCF
 
-d = LSB of highest byte
-b = MSB of middle byte
-c = MSB of lowest byte
-f = LSB of lowest byte
+D = LSB of highest byte\
+B = MSB of middle byte\
+C = MSB of lowest byte\
+F = LSB of lowest byte
 
 
 ##  Timestamp
 
-range   0, 4095
-
-12 bits needed
-covers 68 minutes for 1 second representation
-covers 34 minutss for 500 milliseconds representation
-requires launch signal for higher accuracy
+The system is expected to be running for 2 hours at a 5Hz 
+sampling and trasmission rate. With the timestamp as an integer
+this gives a maximum stamp of 36000 readings which is 16-bit wide. 
+A 16-bit timestamp will give even more space up to 65535 readings.
 
 
 ##  Overall
 
-h = header
-c = checksum
-d = data
-t = time
+|  Byte  |   Content   |
+|:------:|:-----------:|
+| byte 1 | `HHHC CCCD` |
+| byte 2 | `HHHD DDDD` |
+| byte 3 | `HHHD DDDD` |
+| byte 4 | `HHHD DDDD` |
+| byte 5 | `HHHD DDDD` |
+| byte 6 | `HHHD DDTT` |
+| byte 7 | `HHHT TTTT` |
+| byte 8 | `111T TTTT` |
 
-form 1
-
-byte 1: hhhc cccd
-byte 2: hhhd dddd
-byte 3: hhhd dddd
-byte 4: hhhd dddd
-byte 5: hhhd dddd
-byte 6: hhhd ddtt
-byte 7: hhht tttt
-byte 8: 111t tttt
-
-last header is set to 111 to indicate end of packet
+H = Header, C = Checksum, D = Data, T = Timestamp
