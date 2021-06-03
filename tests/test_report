@@ -1,0 +1,98 @@
+Test report:
+	time in range,  value in range
+		BAR   0x00
+			      0.00   0000	OK
+			 30,000.00	 0010	OK
+			 45,689.889	 1236	OK
+			110,000.00	 1598	FAIL	data: OK,	check: OK,	time: FAIL=1790
+			________________________
+			110,000.00	 1598	OK
+			110,000.00	 0000	FAIL	data: OK,	check: OK,	time: FAIL=574
+			________________________
+										bug fixed:
+										time stamp encoding did not initilize to
+										zero which kept previous bits and made 
+										grabage values
+			________________________
+			 15,221.00	 0000	OK		0.04 off
+		
+		GPS_L 0x01
+			-180.0000	0000	OK
+			-180.14578	0000	OK
+			-180.14578	0753	OK
+			 000.0000	0000	OK
+			 180.4785	0951	OK
+			 180.4785	3333	OK
+		
+		GPS_T 0x02
+			-90.0000	0000	OK
+			-90.8520	0154	OK
+			-84.9340	0000	OK		0.0004 off		fixed
+			 00.0000	0000	OK
+			 84.9340	0000	OK		0.0004 off		fixed
+			 90.0000	0000	OK
+			 55.7410	1255	OK		0.0002 off		fixed
+			 55.7410	4095	OK
+		
+		ACC_X 0x03
+			-200.0000	0000	OK
+			-200.0000	0614	OK
+			-153.8520	1111	OK
+			 000.0000	0000	OK
+			 153.8520	1111	OK
+			 200.0000	1654	OK
+			 200.0000	0000	OK
+
+		ACC_Y 0x04
+			same as ACC_X		OK
+
+		ACC_Z 0x05
+			same as ACC_X		OK
+
+	time out range, value in range
+		time value resets after 4095
+		quite predictable since it is 
+		12 bits long
+
+	time in range,  value out range
+		BAR   0x00
+			theoretical limit is 3 bytes
+			after expansion which equals 
+			to 167772.15 before expansion
+
+			numbers start looping after
+			that value which is expected
+			with a small unprecision which
+			is recorder before due to an
+			bug in the float2int function.
+			This bug will be resolved and 
+			the concludes that exceeding
+			the range just resets the value.
+		RMD
+			other data types are similar 
+			to BAR in all aspects except
+			the range is 3 bytes with one
+			bit less (reserved for sign).
+			the theoretical limit after
+			expansion is 8388607 and the
+			limit before expansion is
+			838.8607
+
+			values reset after exceeding
+			the limit and go negative since
+			the MSB is reserved for sign.
+			negative numbers reset and remain
+			negative due to the hard coding
+			of the negative sign (MSB).
+
+		Those observations will not cause an
+		issue since the maximum the sensors 
+		using those headers do not send values
+		exceeding the required limit which
+		is very far from the theoreticallimit
+
+		Time stamp and values are encoded
+		seperatly so there is no interference
+		between and overflow in one on the other.
+			
+	interrupt handeling:
