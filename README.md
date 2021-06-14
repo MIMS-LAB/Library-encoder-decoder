@@ -1,5 +1,7 @@
 #   Library-RRC-encoder
 
+Current version = 3.0
+
 This is the RRC encoder and decoder protocol for data broadcasting.
 Each package includes the following information:
 
