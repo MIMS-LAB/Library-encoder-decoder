@@ -1,8 +1,5 @@
 #   Library-RRC-encoder
 
-WARNING: The current source code is for an older version of the encoder,
-it is yet to be updated to the newer vecrsion described in this readme.
-
 This is the RRC encoder and decoder protocol for data broadcasting.
 Each package includes the following information:
 
@@ -10,6 +7,10 @@ Each package includes the following information:
 2.  Headers: to identify the type of data.
 3.  Checksum: a simple check of corruption.
 4.  Timestamp: to indicate the time of data collection.
+
+The decoder has one dependency which is 
+[pyserial](https://pypi.org/project/pyserial/).
+You can install with `pip install pyserial`
 
 
 ##  Data
@@ -49,6 +50,21 @@ The barometer collects data for pressure in mbar and temperature in celcius.
 |--------|:---------:|:---------:|:-------------------:|:------------------:|
 |  PRES  |   10.00   | 1200.00   |      120,000        |       18 bit       |
 |  TEMP  |  -40.00   |   85.00   |        8,500        |       15 bit       |
+
+
+##  Scaling Magnitudes
+
+Each data type will be scaled with a constant magnitude to convert into an integer.
+
+|  Data  |  Magnitude |
+|--------|:----------:|
+|  LONG  |  10,000    |
+|  LAT   |  10,000    |
+|   X    |     100    |
+|   Y    |     100    |
+|   Z    |     100    |
+|  PRES  |     100    |
+|  TEMP  |     100    |
 
 
 ##  Headers
@@ -95,17 +111,17 @@ The overall protocol will be as the following:
 *   Checksum will use 5 bits and will be inserted in the first packet.
 *   Timestamp will use 20 bits giving more time of operation and/or higher STR.
 
-|   Byte  |   Content   |
-|:-------:|:-----------:|
-| byte 01 | `HHHC CCCC` |
-| byte 02 | `HHHD DDDD` |
-| byte 03 | `HHHD DDDD` |
-| byte 04 | `HHHD DDDD` |
-| byte 05 | `HHHD DDDD` |
-| byte 06 | `HHH0 DDDD` |
-| byte 07 | `HHHT TTTT` |
-| byte 08 | `HHHT TTTT` |
-| byte 09 | `HHHT TTTT` |
-| byte 10 | `111T TTTT` |
+|  Byte  |   Content   |
+|:------:|:-----------:|
+| byte 0 | `HHHC CCCC` |
+| byte 1 | `HHHD DDDD` |
+| byte 2 | `HHHD DDDD` |
+| byte 3 | `HHHD DDDD` |
+| byte 4 | `HHHD DDDD` |
+| byte 5 | `HHH0 DDDD` |
+| byte 6 | `HHHT TTTT` |
+| byte 7 | `HHHT TTTT` |
+| byte 8 | `HHHT TTTT` |
+| byte 9 | `111T TTTT` |
 
 H = Header, C = Checksum, D = Data, T = Timestamp
