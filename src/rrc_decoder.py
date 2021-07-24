@@ -1,3 +1,4 @@
+from _typeshed import Self
 import serial
 
 ####    global constants    ####
@@ -51,7 +52,7 @@ class radioConnection:
     '''
 
 
-    _inSerialBuffer   = None
+    _RadioSerialBuffer   = None
 
     def __init__(self, port, baudrate):
         '''
@@ -63,7 +64,7 @@ class radioConnection:
         port -- Port number, either "COM*" for windows or "tty*" for nix systems.
         baudrate -- Baud rate for connection.
         '''
-        self._inSerialBuffer = serial.Serial(port, baudrate) 
+        self._RadioSerialBuffer = serial.Serial(port, baudrate) 
 
     def _readByte(self):
         '''
@@ -79,11 +80,27 @@ class radioConnection:
         None - of not byte are available
         '''
         
-        if self._inSerialBuffer.inWaiting() == 0:
+        if self._RadioSerialBuffer.inWaiting() == 0:
             return None
 
-        return int.from_bytes(self._inSerialBuffer.read(), byteorder="big", signed=False)
+        return int.from_bytes(self._RadioSerialBuffer.read(), byteorder="big", signed=False)
 
+    def sendCommand(self, command: str):
+        '''
+        sendCommand(self, command: str):
+
+        Send a string command to the RFD on the rocket with a terminating newline feed
+
+        Params:
+        command: str -- a string to be sent to the rocket
+
+        Return:
+        None
+        '''
+
+        command += '\n'
+        command  = bytes(command, 'utf-8')
+        self._RadioSerialBuffer.write(command)
 
     def getPackets(self, retries=-1):
         '''
