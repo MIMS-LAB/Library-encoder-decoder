@@ -44,7 +44,7 @@ class radioConnection:
     -------
     __init__(port, baudrate):
         initilze a connection with the specified port and baudrate
-    _readByte():
+    readByte():
         Read a byte from serial port if there are available bytes
     getPackets(retries):
         Get a valid package of data
@@ -65,7 +65,7 @@ class radioConnection:
         '''
         self._RadioSerialBuffer = serial.Serial(port, baudrate) 
 
-    def _readByte(self):
+    def readByte(self):
         '''
         readByte(self)
 
@@ -83,6 +83,26 @@ class radioConnection:
             return None
 
         return int.from_bytes(self._RadioSerialBuffer.read(), byteorder="big", signed=False)
+    
+    def readString(self):
+        '''
+        readString(self)
+
+        Read a byte from serial port if there are available bytes
+
+        Params:
+        None
+
+        Return:
+        int - if byte was read
+        None - of not byte are available
+        '''
+        inWaitStr = self._RadioSerialBuffer.inWaiting()
+        
+        if inWaitStr == 0:
+            return None
+
+        return self._RadioSerialBuffer.read(inWaitStr).strip().decode("utf-8")
 
     def sendCommand(self, command: str):
         '''
@@ -94,12 +114,21 @@ class radioConnection:
         command: str -- a string to be sent to the rocket
 
         Return:
-        None
+        1-success
+        None-fail to write
         '''
 
         command += '\n'
         command  = bytes(command, 'utf-8')
         self._RadioSerialBuffer.write(command)
+        
+        outWait = self._RadioSerialBuffer.out_waiting
+
+        if (outWait == 0):
+            return 1
+        else:
+            return 0
+        
 
     def getPackets(self, retries=-1):
         '''
@@ -120,7 +149,7 @@ class radioConnection:
             retries -= 1
 
             if goodToGo:               #  read first byte from buffer and store it
-                byte = self._readByte()
+                byte = self.readByte()
                 if byte == None:
                     return None
 
@@ -130,7 +159,7 @@ class radioConnection:
             goodToGo = True
             
             for i in range(RRC_DATAPACK_SIZE - 2):        #  read remaining bytes
-                byte = self._readByte()                   #  read one byte from buffer
+                byte = self.readByte()                   #  read one byte from buffer
                 if byte == None:
                     return None
 
@@ -144,7 +173,7 @@ class radioConnection:
             if not goodToGo:           #  restart if not good to go
                 continue
             
-            byte = self._readByte()     #  read the last byte
+            byte = self.readByte()     #  read the last byte
             if byte == None:
                 return None
 
