@@ -1,7 +1,7 @@
 import sys
 # this is where python stores modules, yours could be different
-sys.path.append(r"D:/Alessandro/python39/Lib/site-packages")
-sys.path.insert(1, "D:/Alessandro/FILESFORSCHOOL/RRC-Avionics-master/Library-RRC-encoder/src")
+sys.path.append(r"C:\Users\soham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages")
+sys.path.insert(1, r"C:\Users\soham\Documents\GitHub\Library-RRC-encoder\src")
 #import tty,termios
 
 import time as t

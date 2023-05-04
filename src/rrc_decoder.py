@@ -21,7 +21,7 @@ RRC_SHIFT_HEADER  = 5               #  header shift    (xxx0 0000) >> 5  => (111
 ## Bit Masks
 RRC_MASK_CHECKS   = 0x1f            #  0001 1111
 RRC_MASK_DATA     = 0x1f            #  0001 1111
-RRC_MASK_TIME     = 0x1f            #  0001 1111
+RRC_MASK_TIME     = 0x1f            #  0001 1111 
 RRC_MASK_HEADER   = 0xe0            #  1110 0000
 
 ## package size
@@ -156,6 +156,7 @@ class radioConnection:
                 packet = [byte]
             
             header   = readHeader(packet[0])              #  store the header on its own
+
             goodToGo = True
             
             for i in range(RRC_DATAPACK_SIZE - 2):        #  read remaining bytes
@@ -276,8 +277,11 @@ def decodePackets(packets):
     corrupted = checksum != generateChecksum(data)  #  check for data corruption by checking the checksum
 
     data = fixData(data, header)    #  fix data
+    header_list=["RRC_HEAD_GPS_LONG","RRC_HEAD_GPS_LAT","RRC_HEAD_ACC_X","RRC_HEAD_ACC_Y","RRC_HEAD_ACC_Z","RRC_HEAD_PRESS","RRC_HEAD_TEMP","RRC_HEAD_END"]
+    header_string=header_list[header]
 
     return { "header"    : header, 
+             "name"      : header_string,
              "checksum"  : checksum,
              "data"      : data,
              "time"      : time,
