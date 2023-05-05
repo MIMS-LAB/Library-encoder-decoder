@@ -7,15 +7,15 @@ sys.path.insert(1, r"C:\Users\soham\Documents\GitHub\Library-RRC-encoder\src")
 import time as t
 import rrc_decoder as d
 import serial
+import keyboard 
 
-port = "COM5"
+port = "COM6"
 baud  = 38400 
 ####    initilization    ####
 i =0 
 count = 0
 radio_connect = False
 rx_command = False
-rx_data_com = False
 while True:
 
     try:
@@ -37,28 +37,34 @@ while (radio_connect == True):
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
     
     data_str= radio.readString()#_RadioSerialBuffer.read(byteInWait).strip().decode("utf-8")    # write a string
-    print("data is %s \n" % data_str)
+    if data_str==None:
+        continue
+    else:
+       data_str= data_str.split('\n')
+       print("data is %s \n" % data_str[0])
     #print("# bytes in wait: %d \n" % byteInWait)
     t.sleep(1)
-    #if (data_str == 'idle'):
-        #x=sys.stdin.read(1)[0]
-        #print("You pressed", x)
-    
-        #if (x== "l"):
-    radio.sendCommand("launch")
-    print("sending launch command \n")
+    if (data_str[0] == 'idle'):
+        radio.sendCommand("launch\n")
+        t.sleep(1)
+        if keyboard.is_pressed('space'):
+            rx_command = True
+            print("sending launch command \n") 
+            radio.sendCommand("launch\n")
+            t.sleep(1.5)
+            break 
+        else:
+            rx_command= False
     t.sleep(0.5)
-    rx_command = True
-    rx_data_com = True
      #   break
     
     #else:
      #   print("packet error\n")
     
-    print("data command is: %s\n"% data_str) 
+    print("data command is: %s\n"% data_str[0]) 
 
     t.sleep(1)
-    break
+
 print("launch successfull\n")
 #termios.tcsetattr(sys.stdin, termios.TCSADRAIN, filedescriptors)
 
@@ -66,6 +72,7 @@ while(rx_command == True):
     packets = radio.getPackets()
     
     if packets == None:
+        t.sleep(2)
         print("an error happend")
         continue
   
@@ -82,5 +89,3 @@ while(rx_command == True):
     
 print("ERROR!")
 radio.close()
-
-
