@@ -14,6 +14,7 @@ baud  = 38400
 ####    initilization    ####
 i =0 
 count = 0
+flag=True
 radio_connect = False
 rx_command = False
 while True:
@@ -32,42 +33,51 @@ print("Connected")
 #filedescriptors = termios.tcgetattr(sys.stdin) # retrieves current terminal settings 
 #tty.setcbreak(sys.stdin) # allows for single character commands in terminal ; RAW mode instead of COOKED  mode
 #tty and termios make sure terminal reads the key inputs 
+
+'''
 while (radio_connect == True):
     
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
     
     data_str= radio.readString()#_RadioSerialBuffer.read(byteInWait).strip().decode("utf-8")    # write a string
-    if data_str==None:
+    if (data_str==None):
         continue
     else:
        data_str= data_str.split('\n')
-       print("data is %s \n" % data_str[0])
+       print("data is %s " % data_str[0])
     #print("# bytes in wait: %d \n" % byteInWait)
     t.sleep(1)
+    print('\n')
     if (data_str[0] == 'idle'):
-        radio.sendCommand("launch\n")
+        start=t.time()
+        while True:
+            end=t.time()
+            timer=end-start
+            if keyboard.is_pressed('space'):
+                rx_command = True
+                print("sending launch command \n") 
+                radio.sendCommand("launch\n")
+                t.sleep(1)
+                flag=False
+                break
+            elif (timer>2):
+                rx_command= False
+                break
+    if flag==False:
+        break
+    else:
+        #t.sleep(0.5)
+        print("data command is: %s\n"% data_str[0]) 
         t.sleep(1)
-        if keyboard.is_pressed('space'):
-            rx_command = True
-            print("sending launch command \n") 
-            radio.sendCommand("launch\n")
-            t.sleep(1.5)
-            break 
-        else:
-            rx_command= False
-    t.sleep(0.5)
      #   break
     
     #else:
      #   print("packet error\n")
-    
-    print("data command is: %s\n"% data_str[0]) 
-
-    t.sleep(1)
-
+'''
+rx_command=True
 print("launch successfull\n")
 #termios.tcsetattr(sys.stdin, termios.TCSADRAIN, filedescriptors)
-
+#rx_command = True
 while(rx_command == True):
     packets = radio.getPackets()
     
