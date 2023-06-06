@@ -277,7 +277,7 @@ def decodePackets(packets):
     corrupted = checksum != generateChecksum(data)  #  check for data corruption by checking the checksum
 
     data = fixData(data, header)    #  fix data
-    header_list=["RRC_HEAD_GPS_LONG","RRC_HEAD_GPS_LAT","RRC_HEAD_ACC_X","RRC_HEAD_ACC_Y","RRC_HEAD_ACC_Z","RRC_HEAD_PRESS","RRC_HEAD_TEMP","RRC_HEAD_END"]
+    header_list=["GPS_LONG","GPS_LAT","ACC_X","ACC_Y","ACC_Z","PRESS","TEMP","END"]
     header_string=header_list[header]
 
     return { "header"    : header, 

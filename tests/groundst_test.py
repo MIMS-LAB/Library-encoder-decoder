@@ -2,6 +2,7 @@ import sys
 # this is where python stores modules, yours could be different
 sys.path.append(r"C:\Users\soham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages")
 sys.path.insert(1, r"C:\Users\soham\Documents\GitHub\Library-RRC-encoder\src")
+
 #import tty,termios
 
 import time as t
@@ -9,11 +10,12 @@ import rrc_decoder as d
 import serial
 import keyboard 
 
-port = "COM6"
-baud  = 38400 
+port = "COM11"
+baud  = 115200 
 ####    initilization    ####
 i =0 
 count = 0
+#uno = serial.Serial("COM9",115200)      
 flag=True
 radio_connect = False
 rx_command = False
@@ -74,10 +76,10 @@ while (radio_connect == True):
     #else:
      #   print("packet error\n")
 '''
+
 rx_command=True
 print("launch successfull\n")
 #termios.tcsetattr(sys.stdin, termios.TCSADRAIN, filedescriptors)
-#rx_command = True
 while(rx_command == True):
     packets = radio.getPackets()
     
@@ -88,6 +90,23 @@ while(rx_command == True):
   
     result = d.decodePackets(packets)
     print(result)
+    
+    '''if result["header"]==0:
+        uno.open()
+        data_long=result["data"]
+        #gps_long=(str(data_long)+'\n').encode('utf-8')
+        send="100\n"
+        uno.write(bytes(send,'utf-8'))
+        uno.readline()
+        uno.close()
+
+    if result["header"]==1:
+        uno.open()
+        gps_lat=result["data"]
+        send2="115\n"
+        uno.write(bytes(send2,'utf-8'))
+        uno.close()'''
+
     if result["corrupted"]:
         print("CORRUPT: " + str(i))
         continue
@@ -95,7 +114,7 @@ while(rx_command == True):
     result.pop("checksum")
     
     i=i+1
-    t.sleep(1)
+    t.sleep(0.4)
     
 print("ERROR!")
 radio.close()
