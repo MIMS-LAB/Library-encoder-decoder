@@ -114,7 +114,7 @@ while(rx_command == True):
     result.pop("checksum")
     
     i=i+1
-    t.sleep(0.4)
+    t.sleep(0.28)
     
 print("ERROR!")
 radio.close()
