@@ -9,13 +9,14 @@ import time as t
 import rrc_decoder as d
 import serial
 import keyboard 
+import random
 
 port = "COM11"
 baud  = 115200 
 ####    initilization    ####
 i =0 
 count = 0
-#uno = serial.Serial("COM9",115200)      
+uno = serial.Serial("COM9",115200)
 flag=True
 radio_connect = False
 rx_command = False
@@ -36,8 +37,8 @@ print("Connected")
 #tty.setcbreak(sys.stdin) # allows for single character commands in terminal ; RAW mode instead of COOKED  mode
 #tty and termios make sure terminal reads the key inputs 
 
-'''
-while (radio_connect == True):
+
+'''while (radio_connect == True):
     
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
     
@@ -49,7 +50,7 @@ while (radio_connect == True):
        print("data is %s " % data_str[0])
     #print("# bytes in wait: %d \n" % byteInWait)
     t.sleep(1)
-    print('\n')
+    print('...\n')
     if (data_str[0] == 'idle'):
         start=t.time()
         while True:
@@ -58,7 +59,6 @@ while (radio_connect == True):
             if keyboard.is_pressed('space'):
                 rx_command = True
                 print("sending launch command \n") 
-                radio.sendCommand("launch\n")
                 t.sleep(1)
                 flag=False
                 break
@@ -74,8 +74,7 @@ while (radio_connect == True):
      #   break
     
     #else:
-     #   print("packet error\n")
-'''
+     #   print("packet error\n")'''
 
 rx_command=True
 print("launch successfull\n")
@@ -84,6 +83,7 @@ while(rx_command == True):
     packets = radio.getPackets()
     
     if packets == None:
+        #radio.sendCommand("launch\n")
         t.sleep(2)
         print("an error happend")
         continue
@@ -91,21 +91,12 @@ while(rx_command == True):
     result = d.decodePackets(packets)
     print(result)
     
-    '''if result["header"]==0:
-        uno.open()
+    if result["header"]==0:
         data_long=result["data"]
-        #gps_long=(str(data_long)+'\n').encode('utf-8')
-        send="100\n"
-        uno.write(bytes(send,'utf-8'))
-        uno.readline()
-        uno.close()
+        #gps_long=(str(data_long*10000)+'\n').encode('utf-8')
+        gps_long=(str(random.uniform(79.1,79.5)*10000)+'\n').encode('utf-8')#random data
+        uno.write(gps_long)
 
-    if result["header"]==1:
-        uno.open()
-        gps_lat=result["data"]
-        send2="115\n"
-        uno.write(bytes(send2,'utf-8'))
-        uno.close()'''
 
     if result["corrupted"]:
         print("CORRUPT: " + str(i))
