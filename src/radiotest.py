@@ -12,7 +12,7 @@ while True:
 
     try:
         rx_ser =  d.radioConnection(rxport, baud)
-        tx_ser =  d.radioConnection(txport, baud)
+        #tx_ser =  d.radioConnection(txport, baud)
 
         radio_connect = True
         break
@@ -22,11 +22,11 @@ while True:
         exit(-1)
 
 print("Connected")
-
+'''
 while True:
 
     if (radio_connect==True):
-        tx_ser.sendCommand("command")
+        tx_ser.sendCommand("command")  
         tx_ser.sendCommand("command")
         tx_ser.sendCommand("command")
         tx_ser.sendCommand("command")
@@ -37,7 +37,7 @@ while True:
     t.sleep(1)
 
 print("out of command loop\n")
-
+'''
 while True:
     
     data= rx_ser.readString()

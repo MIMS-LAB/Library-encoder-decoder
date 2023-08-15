@@ -1,7 +1,7 @@
 import sys
 # this is where python stores modules, yours could be different
-sys.path.append(r"C:\Users\soham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages")
-sys.path.insert(1, r"C:\Users\soham\Documents\GitHub\Library-RRC-encoder\src")
+sys.path.append(r"D:\Alessandro\python39\Lib\site-packages")
+sys.path.insert(1, r"D:\Alessandro\FILESFORSCHOOL\RRC-Avionics-master\Library-RRC-encoder\src")
 
 #import tty,termios
 
@@ -10,7 +10,7 @@ import rrc_decoder as d
 import serial
 import keyboard 
 
-port = "COM11"
+port = "COM5"
 baud  = 115200 
 ####    initilization    ####
 i =0 
@@ -36,7 +36,7 @@ print("Connected")
 #tty.setcbreak(sys.stdin) # allows for single character commands in terminal ; RAW mode instead of COOKED  mode
 #tty and termios make sure terminal reads the key inputs 
 
-'''
+
 while (radio_connect == True):
     
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
@@ -75,7 +75,7 @@ while (radio_connect == True):
     
     #else:
      #   print("packet error\n")
-'''
+
 
 rx_command=True
 print("launch successfull\n")
@@ -109,11 +109,12 @@ while(rx_command == True):
 
     if result["corrupted"]:
         print("CORRUPT: " + str(i))
+        i=i+1
+
         continue
 
     result.pop("checksum")
     
-    i=i+1
     t.sleep(0.28)
     
 print("ERROR!")
