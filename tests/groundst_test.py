@@ -11,11 +11,15 @@ import serial
 import keyboard 
 
 port = "COM5"
+txport = "COM3"
+
 baud  = 115200 
 ####    initilization    ####
 i =0 
 count = 0
-#uno = serial.Serial("COM9",115200)      
+uno_flag = False
+if (uno_flag):
+    uno = serial.Serial("COM9",115200)      
 flag=True
 radio_connect = False
 rx_command = False
@@ -23,6 +27,7 @@ while True:
 
     try:
         radio = d.radioConnection(port, baud)
+
         radio_connect = True
         break
     except Exception as e:
@@ -35,8 +40,6 @@ print("Connected")
 #filedescriptors = termios.tcgetattr(sys.stdin) # retrieves current terminal settings 
 #tty.setcbreak(sys.stdin) # allows for single character commands in terminal ; RAW mode instead of COOKED  mode
 #tty and termios make sure terminal reads the key inputs 
-
-
 while (radio_connect == True):
     
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
@@ -67,10 +70,15 @@ while (radio_connect == True):
                 break
     if flag==False:
         break
+    
     else:
         #t.sleep(0.5)
         print("data command is: %s\n"% data_str[0]) 
         t.sleep(1)
+        if keyboard.is_pressed('D'):
+            t.sleep(1)
+            print("exitting connect loop \n")
+            break
      #   break
     
     #else:
@@ -90,22 +98,23 @@ while(rx_command == True):
   
     result = d.decodePackets(packets)
     print(result)
-    
-    '''if result["header"]==0:
-        uno.open()
-        data_long=result["data"]
-        #gps_long=(str(data_long)+'\n').encode('utf-8')
-        send="100\n"
-        uno.write(bytes(send,'utf-8'))
-        uno.readline()
-        uno.close()
+    if (uno_flag):
 
-    if result["header"]==1:
-        uno.open()
-        gps_lat=result["data"]
-        send2="115\n"
-        uno.write(bytes(send2,'utf-8'))
-        uno.close()'''
+        if result["header"]==0:
+            uno.open()
+            data_long=result["data"]
+            #gps_long=(str(data_long)+'\n').encode('utf-8')
+            send="100\n"
+            uno.write(bytes(send,'utf-8'))
+            uno.readline()
+            uno.close()
+
+        if result["header"]==1:
+            uno.open()
+            gps_lat=result["data"]
+            send2="115\n"
+            uno.write(bytes(send2,'utf-8'))
+            uno.close()
 
     if result["corrupted"]:
         print("CORRUPT: " + str(i))
