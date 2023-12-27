@@ -17,7 +17,8 @@
 #define RRC_HEAD_ACC_Z      0x04        //  accelerometer z (100)
 #define RRC_HEAD_PRESS      0x05        //  baromete        (101)
 #define RRC_HEAD_TEMP       0x06        //  temperature     (110)
-#define RRC_HEAD_END        0x07        //  end             (111)
+#define RRC_HEAD_BATT_V     0x07
+#define RRC_HEAD_END        0x08        //  end             (111)
 
 // Bit Shift
 #define RRC_SHIFT_CHECKS    0           //  checksum shift  (000x xxxx) << 0  => (000x xxxx)
