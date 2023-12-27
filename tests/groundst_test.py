@@ -1,7 +1,7 @@
 import sys
 # this is where python stores modules, yours could be different
-sys.path.append(r"C:\Users\soham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages")
-sys.path.insert(1, r"C:\Users\soham\Documents\GitHub\Library-RRC-encoder\src")
+sys.path.append(r"D:\Alessandro\python39\Lib\site-packages")
+sys.path.insert(1, r"D:\Alessandro\FILESFORSCHOOL\RRC-Avionics-master\Library-RRC-encoder\src")
 
 #import tty,termios
 
@@ -9,14 +9,17 @@ import time as t
 import rrc_decoder as d
 import serial
 import keyboard 
-import random
 
-port = "COM11"
+port = "COM5"
+txport = "COM3"
+
 baud  = 115200 
 ####    initilization    ####
 i =0 
 count = 0
-uno = serial.Serial("COM9",115200)
+uno_flag = False
+if (uno_flag):
+    uno = serial.Serial("COM9",115200)      
 flag=True
 radio_connect = False
 rx_command = False
@@ -24,6 +27,7 @@ while True:
 
     try:
         radio = d.radioConnection(port, baud)
+
         radio_connect = True
         break
     except Exception as e:
@@ -36,9 +40,7 @@ print("Connected")
 #filedescriptors = termios.tcgetattr(sys.stdin) # retrieves current terminal settings 
 #tty.setcbreak(sys.stdin) # allows for single character commands in terminal ; RAW mode instead of COOKED  mode
 #tty and termios make sure terminal reads the key inputs 
-
-
-'''while (radio_connect == True):
+while (radio_connect == True):
     
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
     
@@ -67,14 +69,20 @@ print("Connected")
                 break
     if flag==False:
         break
+    
     else:
         #t.sleep(0.5)
         print("data command is: %s\n"% data_str[0]) 
         t.sleep(1)
+        if keyboard.is_pressed('D'):
+            t.sleep(1)
+            print("exitting connect loop \n")
+            break
      #   break
     
     #else:
-     #   print("packet error\n")'''
+     #   print("packet error\n")
+
 
 rx_command=True
 print("launch successfull\n")
@@ -90,21 +98,32 @@ while(rx_command == True):
   
     result = d.decodePackets(packets)
     print(result)
-    
-    if result["header"]==0:
-        data_long=result["data"]
-        #gps_long=(str(data_long*10000)+'\n').encode('utf-8')
-        gps_long=(str(random.uniform(79.1,79.5)*10000)+'\n').encode('utf-8')#random data
-        uno.write(gps_long)
+    if (uno_flag):
 
+        if result["header"]==0:
+            uno.open()
+            data_long=result["data"]
+            #gps_long=(str(data_long)+'\n').encode('utf-8')
+            send="100\n"
+            uno.write(bytes(send,'utf-8'))
+            uno.readline()
+            uno.close()
+
+        if result["header"]==1:
+            uno.open()
+            gps_lat=result["data"]
+            send2="115\n"
+            uno.write(bytes(send2,'utf-8'))
+            uno.close()
 
     if result["corrupted"]:
         print("CORRUPT: " + str(i))
+        i=i+1
+
         continue
 
     result.pop("checksum")
     
-    i=i+1
     t.sleep(0.28)
     
 print("ERROR!")
