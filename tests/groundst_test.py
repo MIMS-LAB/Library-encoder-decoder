@@ -1,7 +1,7 @@
 import sys
 # this is where python stores modules, yours could be different
-sys.path.append(r"D:\Alessandro\python39\Lib\site-packages")
-sys.path.insert(1, r"D:\Alessandro\FILESFORSCHOOL\RRC-Avionics-master\Library-RRC-encoder\src")
+sys.path.append(r"C:\Users\soham\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages")
+sys.path.insert(1, r"C:\Users\soham\Documents\GitHub\Library-RRC-encoder\src")
 
 #import tty,termios
 
@@ -10,24 +10,12 @@ import rrc_decoder as d
 import serial
 import keyboard 
 
-<<<<<<< Updated upstream
-port = "COM5"
-txport = "COM3"
-
-=======
 port = "COM4"
->>>>>>> Stashed changes
 baud  = 115200 
 ####    initilization    ####
 i =0 
 count = 0
-<<<<<<< Updated upstream
-uno_flag = False
-if (uno_flag):
-    uno = serial.Serial("COM9",115200)      
-=======
 #uno = serial.Serial(port,115200)
->>>>>>> Stashed changes
 flag=True
 radio_connect = False
 rx_command = False
@@ -48,13 +36,10 @@ print("Connected")
 #filedescriptors = termios.tcgetattr(sys.stdin) # retrieves current terminal settings 
 #tty.setcbreak(sys.stdin) # allows for single character commands in terminal ; RAW mode instead of COOKED  mode
 #tty and termios make sure terminal reads the key inputs 
-<<<<<<< Updated upstream
-while (radio_connect == True):
-=======
 
+'''
 #key press code for breaking idle state 
-'''while (radio_connect == True):
->>>>>>> Stashed changes
+while (radio_connect == True):
     
     #byteInWait = radio._RadioSerialBuffer.inWaiting()
     
@@ -95,34 +80,34 @@ while (radio_connect == True):
      #   break
     
     #else:
-     #   print("packet error\n")
-
+    #print("packet error\n")
+'''
 
 rx_command=True
 print("launch successfull\n")
 #termios.tcsetattr(sys.stdin, termios.TCSADRAIN, filedescriptors)
 while(rx_command == True):
     packets = radio.getPackets()
-    
+    if packets ==None:
+        print("packets is none \n")
+        continue
+    result = d.decodePackets(packets)
+    '''
     if packets == None:
-       ''' gps_long=(str(random.uniform(78.10000,78.12000))+'\t').encode('utf-8')#random data
+    gps_long=(str(random.uniform(78.10000,78.12000))+'\t').encode('utf-8')#random data
         uno.write(gps_long)
         print(gps_long)
         gps_lat=(str(random.uniform(41.10000,41.12000))+'\t').encode('utf-8')#random data
         uno.write(gps_lat)
-        print(gps_lat)'''
+        print(gps_lat) 
+        
        t.sleep(2)
        print("an error happend")
        continue
   
-    result = d.decodePackets(packets)
-    print(result)
-<<<<<<< Updated upstream
-    if (uno_flag):
-=======
+
     
-    
-    '''if result["header"]==1:
+    if result["header"]==1:
         data_lat=result["data"]
         #gps_lat=(str(data_long)+'\n').encode('utf-8')
         gps_lat=(str(random.uniform(-41.10000,-41.12000))+'\n').encode('utf-8')#random data
@@ -132,8 +117,8 @@ while(rx_command == True):
         data_long=result["data"]
         #gps_long=(str(data_long*10000)+'\n').encode('utf-8')
         gps_long=(str(random.uniform(79.10000,79.12000))+'\n').encode('utf-8')#random data
-        uno.write(gps_long)'''
->>>>>>> Stashed changes
+        uno.write(gps_long)
+    
 
         if result["header"]==0:
             uno.open()
@@ -150,7 +135,8 @@ while(rx_command == True):
             send2="115\n"
             uno.write(bytes(send2,'utf-8'))
             uno.close()
-
+'''
+    print(result)
     if result["corrupted"]:
         print("CORRUPT: " + str(i))
         i=i+1

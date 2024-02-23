@@ -12,7 +12,7 @@ RRC_HEAD_ACC_Y    = 0x03            #  accelerometer y (011)
 RRC_HEAD_ACC_Z    = 0x04            #  accelerometer z (100)
 RRC_HEAD_PRESS    = 0x05            #  baromete        (101)
 RRC_HEAD_TEMP     = 0x06            #  temperature     (110)
-RRC_HEAD_BATT_V   = 0X07
+#RRC_HEAD_BATT_V   = 0X07
 RRC_HEAD_END      = 0x08            #  end             (111)
 
 ## Bit Shift
@@ -232,8 +232,8 @@ def fixData(data, header):
     #  check README for scaling magnitudes selection
     if header in [RRC_HEAD_GPS_LAT, RRC_HEAD_GPS_LONG]:
         data /= 10000
-    elif header==RRC_HEAD_BATT_V:
-        data /=1000
+    #elif header==RRC_HEAD_BATT_V:
+    #    data /=1000
     else:
         data /= 100
 
@@ -280,7 +280,7 @@ def decodePackets(packets):
     corrupted = checksum != generateChecksum(data)  #  check for data corruption by checking the checksum
 
     data = fixData(data, header)    #  fix data
-    header_list=["GPS_LONG","GPS_LAT","ACC_X","ACC_Y","ACC_Z","PRESS","TEMP","BATT_VOLT","END"]
+    header_list=["GPS_LONG","GPS_LAT","ACC_X","ACC_Y","ACC_Z","PRESS","TEMP","END"]
     header_string=header_list[header]
 
     return { "header"    : header, 
