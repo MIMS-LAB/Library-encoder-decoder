@@ -4,9 +4,15 @@ sys.path.append(r"D:\Alessandro\FILESFORSCHOOL\RRC-Avionics-master\Library-RRC-e
 import serial 
 import rrc_decoder as d
 import time as t
+import keyboard
+
+#flag=True
+radio_connect = False
+rx_command = False
 
 rxport= "COM7"
-baud  = 115200
+baud  = 57600
+
 while True:
     try:
         rx_ser =  d.radioConnection(rxport, baud)
@@ -20,15 +26,48 @@ while True:
 
 print("Connected")
 
-while True:
+while radio_connect==True:
     
-    data= rx_ser.readByte()
+    data= rx_ser.readString()
     if data == None:
+        t.sleep(1)
+
         print("none type error")
         continue
     else:
-        print(data)
-    t.sleep(500)
-    rx_ser._RadioSerialBuffer.close()
+        data_str= data.split('\n')
+        print("data is %s " % data_str[0])
+    if (data_str[0] == 'idle'):
+        start=t.time()
+        while rx_command==False:
+            end=t.time()
+            timer=end-start
+            if keyboard.is_pressed('space'):
+                rx_command = True
+                rx_ser.sendCommand("launch\n")
+                print("sending launch command \n") 
+
+                t.sleep(1)
+                #flag=False
+                break
+            
+            elif (timer>2):
+                rx_command= False
+                break
+            
+          
+            '''
+            if flag==False:
+                break
+            '''
+
+               
+    print(data_str)
+
+    t.sleep(1)
+
+
+    
+rx_ser._RadioSerialBuffer.close()
 
 
