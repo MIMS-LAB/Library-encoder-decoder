@@ -103,7 +103,7 @@ class radioConnection:
         if inWaitStr == 0:
             return None
 
-        return self._RadioSerialBuffer.read(inWaitStr).strip().decode("utf-8")
+        return self._RadioSerialBuffer.read(inWaitStr).decode("utf-8")
 
     def sendCommand(self, command: str):
         '''

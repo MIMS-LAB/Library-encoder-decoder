@@ -6,8 +6,8 @@ import rrc_decoder as d
 import time as t
 
 txport = "COM3"
-rxport= "COM5"
-baud  = 115200
+rxport= "COM7"
+baud  = 57600
 while True:
 
     try:
