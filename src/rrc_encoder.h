@@ -4,7 +4,6 @@
 ////    Includes   ////
 #include <stdint.h>
 
-
 ////    Defines    ////
 // Version
 #define RRC_ENCODER_VERSION 3
